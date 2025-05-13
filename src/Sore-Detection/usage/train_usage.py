@@ -19,7 +19,8 @@ from classes.data import WoundDataset
 py_folder_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) 
 train_images_dir = py_folder_path + '/data/labeled/images'
 train_masks_dir = py_folder_path + '/data/labeled/masks'
-import pdb; pdb.set_trace()
+
+
 # Split train and validation datasets
 train_files, val_files = train_test_split(os.listdir(train_images_dir), test_size=0.2, random_state=111)
 
@@ -47,7 +48,7 @@ model = model.to(device)
 # Optimizer (can be one of many)
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
-if __name__ == '__main__':
+def main():
     # check if the model is on the right device
     print(f"Model is on device: {next(model.parameters()).device}")
 
@@ -68,6 +69,10 @@ if __name__ == '__main__':
 
     # Save the trained model
     torch.save(trained_model.state_dict(), py_folder_path + '/results/trained_model.pth')
+
+if __name__ == '__main__':
+    main()
+
 
 # Leave the GPU memory free
 torch.cuda.empty_cache()

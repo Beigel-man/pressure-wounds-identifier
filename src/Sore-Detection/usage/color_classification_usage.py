@@ -12,7 +12,11 @@ output_dir = py_folder_path + '/results/color_classification'
 
 # Run color classification
 
-# For process_directory function to work, first- masks should be created
-# second- the input_dir should contain both images and masks
-# third- the images should be named as <base_name>_original.jpg and masks as <base_name>_MASK.jpg (that's how they are saved after inference) 
-process_directory(input_dir=input_dir, output_dir=output_dir)
+def main():
+    # For process_directory function to work, first- masks should be created
+    # second- the input_dir should contain both images and masks
+    # third- the images should be named as <base_name>_original.jpg and masks as <base_name>_MASK.jpg (that's how they are saved after inference) 
+    process_directory(input_dir=input_dir, output_dir=output_dir)
+
+if __name__ == '__main__':
+    main()
