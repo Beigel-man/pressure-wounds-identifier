@@ -19,9 +19,9 @@ I started with building a small U-Net model and trained it myself. Reasons to us
 
 This proved frustrating because although it worked okay, the segmentation was not precise enough.
 
-Next, I remembered a trained model for public use called SAM (Segment Anything Model), which can segment an area by clicking on any part of the wound. To automate this, I created a small model to capture a change in coloring as a closed shape around the center of the image. I then chose the centroid, which was used as the prompt point for SAM. When the point landed in the wound — it worked great, but it wasn't always the case.
+Next, I remembered a trained model for public use called SAM (Segment Anything Model), which can segment an area by clicking on any part of the wound. To automate this, I created a small model to capture a change in coloring as a closed shape around the center of the image. I then chose the centroid, which was used as the prompt point for SAM. When the point landed in the wound- it worked great, but it wasn't always the case.
 
-**Finally** — I decided to go with a **pretrained U-Net model with a ResNet encoder**, which has some domain "knowledge" of wounds. Combined with labeled masks, augmentation, and a lot of hyperparameter tuning — really good results were obtained.
+**Finally**- I decided to go with a **pretrained U-Net model with a ResNet encoder**, which has some domain "knowledge" of wounds. Combined with labeled masks, augmentation, and a lot of hyperparameter tuning- really good results were obtained.
 
 ---
 
@@ -46,8 +46,8 @@ To calibrate, I created an interactive tool (with ChatGPT's help) to match HSV v
 
 ### Rule for unlabeled images:
 
-If a dominant color appears **more than twice** as often as the second most dominant — it's classified as that color.  
-If not — it’s labeled as **"mixed"**.
+If a dominant color appears **more than twice** as often as the second most dominant- it's classified as that color.  
+If not- it’s labeled as **"mixed"**.
 
 ### Notes on black classification:
 
@@ -62,7 +62,7 @@ If not — it’s labeled as **"mixed"**.
 ### Color certainty score:
 
 - For **single-color**: Combines how dominant the color is and how much of the wound is classified.
-- For **mixed**: Measures how close the top colors are — the more equal, the more confident it's truly mixed.
+- For **mixed**: Measures how close the top colors are- the more equal, the more confident it's truly mixed.
 
 > But the black classification issue still overshadows (wink 😉) this metric.
 
@@ -70,17 +70,17 @@ If not — it’s labeled as **"mixed"**.
 
 ##  Installation
 
--You can install the package directly from GitHub: (read-only)
+-- You can install the package directly from GitHub: (read-only)
 
 pip install git+https://github.com/Beigel-man/pressure-wounds-identifier.git
 
--or for developers:
+-- or for developers:
 
 git clone https://github.com/Beigel-man/pressure-wounds-identifier.git
 
 cd pressure-wounds-identifier
 
-python -m venv .venv && source .venv/bin/activate  
+python -m venv .venv && source .venv/bin/activate
 
 - On Windows: 
 .venv\Scripts\activate
