@@ -1,0 +1,36 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+myenv/
+.venv/
+env/
+venv/
+
+# Editor config files
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Results and checkpoints
+results/
+*.log
+*.ckpt
+*.h5
+*.pth
+*.pkl
+*.npz
+
+# Python packaging artifacts
+*.egg-info/
+dist/
+build/
+
