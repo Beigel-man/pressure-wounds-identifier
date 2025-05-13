@@ -77,8 +77,12 @@ pip install git+https://github.com/Beigel-man/pressure-wounds-identifier.git
 -or for developers:
 
 git clone https://github.com/Beigel-man/pressure-wounds-identifier.git
+
 cd pressure-wounds-identifier
-python -m venv .venv && source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+python -m venv .venv && source .venv/bin/activate  
+
+# On Windows: .venv\Scripts\activate
 pip install -e .
 
 ##  After Installation
@@ -86,5 +90,7 @@ You can use these commands:
 Each command runs a different part of the pipeline (this is the correct order):
 
 'train-model' — Train the segmentation model
+
 'run-inference' — Apply the model to unlabeled images
-'classify-colors' — Classify wounds colors and tissue typy
+
+'classify-colors' — Classify wounds colors and tissue type
