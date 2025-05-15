@@ -1,4 +1,5 @@
 # TAU DataMed Home Assignment project
+## This is a branch for lightweight installation (no Cuda support in torch)
 
 I will start by stating the challenges (and how I overcame):
 
@@ -72,11 +73,11 @@ If not- it’s labeled as **"mixed"**.
 
 -- You can install the package directly from GitHub: (read-only)
 
-pip install git+https://github.com/Beigel-man/pressure-wounds-identifier.git
+pip install git+https://github.com/Beigel-man/pressure-wounds-identifier.git@cpu-version
 
 -- or for developers:
 
-git clone https://github.com/Beigel-man/pressure-wounds-identifier.git
+git clone https://github.com/Beigel-man/pressure-wounds-identifier.git@cpu-version
 
 cd pressure-wounds-identifier
 
