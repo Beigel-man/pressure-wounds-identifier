@@ -10,11 +10,9 @@ def post_process_mask(mask):
     """
     if torch.is_tensor(mask):
         mask = mask.cpu().numpy()
-    
-    # Initial thresholding
-    thresh_val = 0.2
 
-    mask_binary = (mask < thresh_val).astype(np.uint8)
+    mask_binary = mask.astype(np.uint8)
+
     # Find initial components
     labeled_mask = label(mask_binary)
     props = regionprops(labeled_mask)

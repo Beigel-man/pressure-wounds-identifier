@@ -2,7 +2,7 @@ import os
 import sys
 # Add the project root directory to sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
+print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from torch.utils.data import Dataset, DataLoader
 import torch
 import torch.optim as optim
@@ -67,8 +67,14 @@ def main():
     # Check on validation set
     check_validation(trained_model, val_loader, device)
 
+
+    # Define path
+    results_dir = os.path.join(py_folder_path, 'results')
+    os.makedirs(results_dir, exist_ok=True)
+
     # Save the trained model
-    torch.save(trained_model.state_dict(), py_folder_path + '/results/trained_model.pth')
+    torch.save(trained_model.state_dict(), os.path.join(results_dir, 'trained_model.pth'))
+
 
 if __name__ == '__main__':
     main()

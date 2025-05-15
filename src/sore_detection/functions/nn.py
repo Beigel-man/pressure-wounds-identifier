@@ -5,6 +5,8 @@ import copy
 import matplotlib.pyplot as plt
 import numpy as np
 from functions.post_process import post_process_mask
+from scipy.ndimage import binary_erosion, distance_transform_edt
+
 
 # Define the Unet model with ResNet encoder
 def get_pretrained_unet():
@@ -116,6 +118,34 @@ def visualize_loss_curves(train_losses, val_losses):
     plt.grid()
     plt.show()
 
+# Metrics for validation
+# Sensitivity, Specificity, and Mean Surface Distance (MSD)
+
+def compute_sensitivity(pred, gt):
+    pred = ~pred
+    gt = ~gt
+    tp = np.logical_and(pred, gt).sum()
+    fn = np.logical_and(~pred, gt).sum()
+    return tp / (tp + fn + 1e-6)
+
+def compute_specificity(pred, gt):
+    pred = ~pred
+    gt = ~gt
+    tn = np.logical_and(~pred, ~gt).sum()
+    fp = np.logical_and(pred, ~gt).sum()
+    return tn / (tn + fp + 1e-6)
+
+def compute_msd(pred, gt):
+    pred = ~pred
+    gt = ~gt
+    pred_edge = pred ^ binary_erosion(pred)
+    gt_edge = gt ^ binary_erosion(gt)
+    dt_gt = distance_transform_edt(~gt_edge)
+    dt_pred = distance_transform_edt(~pred_edge)
+    d1 = dt_gt[pred_edge].mean() if pred_edge.any() else 0
+    d2 = dt_pred[gt_edge].mean() if gt_edge.any() else 0
+    return (d1 + d2) / 2
+
 # validation- find masks and plot: Raw, After Thresholding, and Post-processed
 
 def check_validation(model, val_loader, device):
@@ -128,13 +158,23 @@ def check_validation(model, val_loader, device):
         outputs = model(images)
         outputs = torch.sigmoid(outputs)  # convert logits to probabilities
 
-        # Apply post-processing
+        # Apply dynamic thresholding and post-processing
         predicted_masks = torch.zeros_like(outputs)
         for i in range(outputs.shape[0]):
-            post_processed = post_process_mask(outputs[i][0])
+            prob_map = outputs[i][0].cpu().numpy()
+
+            # Dynamic threshold - mean - 0.5 std
+            thresh_val = prob_map.mean() - 0.5 * prob_map.std()
+            binary_mask = (prob_map < thresh_val).astype(np.uint8)
+
+            # Post-process
+            post_processed = post_process_mask(binary_mask)
+
+            # Save to tensor
             predicted_masks[i][0] = torch.from_numpy(post_processed).float()
 
     fig, axes = plt.subplots(len(images), 5, figsize=(20, 5*len(images)))
+    metrics = []
 
     for i in range(len(images)):
         # Original image
@@ -152,7 +192,7 @@ def check_validation(model, val_loader, device):
         axes[i, 2].set_title('Raw Probabilities')
         axes[i, 2].axis('off')
 
-        # Initial threshold
+        # Dynamic threshold mean - 0.5 std
         thresh_val = outputs[i][0].cpu().numpy().mean() - 0.5 * outputs[i][0].cpu().numpy().std()
         thresh_mask = (outputs[i][0].cpu().numpy() > thresh_val).astype(np.uint8)
         axes[i, 3].imshow(thresh_mask, cmap='gray')
@@ -160,9 +200,27 @@ def check_validation(model, val_loader, device):
         axes[i, 3].axis('off')
 
         # Final post-processed
+
         axes[i, 4].imshow(predicted_masks[i][0].cpu(), cmap='gray')
         axes[i, 4].set_title('Post-processed')
         axes[i, 4].axis('off')
+
+
+        # Calculate metrics
+        gt = masks[i][0].cpu().numpy() > 0.5
+        pred = predicted_masks[i][0].cpu().numpy() > 0.5
+        sens = compute_sensitivity(pred, gt).item()
+        spec = compute_specificity(pred, gt).item()
+        msd = compute_msd(pred, gt)
+
+        metrics.append({
+            'index': i,
+            'sensitivity': sens,
+            'specificity': spec,
+            'msd': msd
+        })
+
+        print(f"Image {i}: Sensitivity={sens:.3f}, Specificity={spec:.3f}, MSD={msd:.2f}")
 
     plt.tight_layout()
     plt.show()

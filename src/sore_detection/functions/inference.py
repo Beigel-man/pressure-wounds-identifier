@@ -30,8 +30,15 @@ def inference(model, input_dir, output_dir, device, post_process_mask=lambda x: 
                 output = model(image_tensor)
                 output = torch.sigmoid(output)
             
-            # Apply post-processing
-            predicted_mask = post_process_mask(output[0][0])
+            # Convert to numpy
+            prob_map = output[0][0].cpu().numpy()
+
+            # Dynamic threshold- mean - 0.5 * std
+            thresh_val = prob_map.mean() - 0.5 * prob_map.std()
+            binary_mask = (prob_map < thresh_val).astype(np.uint8)
+
+            # Post-processing
+            predicted_mask = post_process_mask(binary_mask)
             
             # Get original image size
             original_width, original_height = image.size
